@@ -1,4 +1,10 @@
-# Makeium
+<p align="center"><img src="branding/makeium-banner-4x.png" alt="Makeium" width="640"></p>
+<p align="center">
+  <img src="branding/badge-neoforge-2x.png" alt="Available for NeoForge" width="168">
+  <img src="branding/badge-fabric-2x.png" alt="Available for Fabric" width="168">
+</p>
+
+# Makeium (26.3)
 
 An all-in-one toolkit for Minecraft 26.3 map makers. One pure-Java jar runs on NeoForge and Fabric; there are no executables.
 Everything Makeium makes is **vanilla**: display entities, datapacks, resource packs and command blocks. Finished maps play without the mod. Makeium registers no items or blocks, so vanilla clients can still join a Makeium server.
@@ -37,6 +43,8 @@ For development runs use `./gradlew :neoforge:runClient` or `./gradlew :fabric:r
 ## Logo
 
 The logo is Minecraft's diamond pickaxe texture recoloured green (`branding/gen_logo.py`). It is not AI-generated art, so every store gets the same jar.
+
+The README banner and the "Available for" badges come from `branding/gen_banner.py`: the same green pickaxe, hand-placed pixel lettering, and vanilla fox and banner textures for the loader icons.
 
 ## License
 

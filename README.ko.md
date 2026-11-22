@@ -1,4 +1,10 @@
-# Makeium
+<p align="center"><img src="branding/makeium-banner-4x.png" alt="Makeium" width="640"></p>
+<p align="center">
+  <img src="branding/badge-neoforge-2x.png" alt="Available for NeoForge" width="168">
+  <img src="branding/badge-fabric-2x.png" alt="Available for Fabric" width="168">
+</p>
+
+# Makeium (26.3)
 
 맵 제작자를 위한 마인크래프트 26.3 올인원 도구 모드입니다. NeoForge와 Fabric에서 jar 하나로 돌아가고, 순수 Java라 실행 파일이 없습니다.
 Makeium이 만든 결과물은 디스플레이 엔티티·데이터팩·리소스팩·커맨드 블록처럼 **모두 바닐라 형식**이라, 완성된 맵은 Makeium 없이 플레이할 수 있습니다. 모드는 아이템이나 블록을 등록하지 않으므로 Makeium 서버에 바닐라 클라이언트도 접속할 수 있습니다.
@@ -35,6 +41,8 @@ Makeium이 만든 결과물은 디스플레이 엔티티·데이터팩·리소�
 ## 로고
 
 마인크래프트 다이아몬드 곡괭이 텍스처의 색을 초록으로 바꾼 것입니다(`branding/gen_logo.py`). AI 생성 그림이 아니므로 모든 스토어에 같은 jar를 올립니다.
+
+README 배너와 "Available for" 배지는 `branding/gen_banner.py`가 만듭니다. 같은 초록 곡괭이에 직접 찍은 픽셀 글자, 로더 아이콘은 바닐라 여우·현수막 텍스처입니다.
 
 ## 라이선스
 
