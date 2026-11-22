@@ -1,0 +1,55 @@
+plugins {
+    // https://projects.neoforged.net/neoforged/moddevgradle
+    id 'net.neoforged.moddev' version '2.0.148' apply false
+    // https://fabricmc.net/develop — 26.x is unobfuscated, so the non-remapping Loom plugin.
+    id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
+}
+
+// ---- ONE mod file for NeoForge and Fabric (pure Java, no executables or native libraries) ----
+// Common code compiled against vanilla (the `common` project), plus each loader's own package
+// (com/hyproj/makeium/{neoforge,fabric}), both loader manifests and the shared assets (fonts, lang, textures).
+// Platform.get() picks the loader at runtime, so neither loader ever links the other one's classes.
+//
+// One edition for every store (GitHub, CurseForge, Modrinth): the icon is Minecraft's diamond pickaxe recoloured green
+// (branding/gen_logo.py), not AI-generated art, so no separate hand-drawn edition is needed.
+def modJarContents = { Jar jar ->
+    jar.group = 'build'
+    jar.destinationDirectory = layout.buildDirectory.dir('libs')
+    jar.duplicatesStrategy = DuplicatesStrategy.FAIL
+
+    jar.dependsOn ':common:classes', ':neoforge:classes', ':neoforge:generateModMetadata', ':fabric:classes', ':fabric:processResources'
+
+    jar.from(project(':common').layout.buildDirectory.dir('classes/java/main'))
+    jar.from(project(':common').layout.buildDirectory.dir('resources/main'))
+    jar.from(project(':neoforge').layout.buildDirectory.dir('classes/java/main')) { include 'com/hyproj/makeium/neoforge/**' }
+    jar.from(project(':neoforge').layout.buildDirectory.dir('generated/sources/modMetadata')) { include 'META-INF/neoforge.mods.toml' }
+    jar.from(project(':fabric').layout.buildDirectory.dir('resources/main')) { include 'fabric.mod.json' }
+    jar.from(project(':fabric').layout.buildDirectory.dir('classes/java/main')) { include 'com/hyproj/makeium/fabric/**' }
+    jar.from(file('docs/license')) { into 'META-INF/licenses' }
+    jar.from(file('LICENSE')) { into 'META-INF' }
+    jar.from(file('NOTICE')) { into 'META-INF' }
+
+    jar.manifest {
+        attributes([
+                'Specification-Title'   : mod_name,
+                'Specification-Vendor'  : mod_author,
+                'Specification-Version' : mod_version,
+                'Implementation-Title'  : mod_name,
+                'Implementation-Version': mod_version,
+                'Implementation-Vendor' : mod_author,
+                'Built-On-Minecraft'    : minecraft_version
+        ])
+    }
+}
+
+tasks.register('universalJar', Jar) {
+    description = 'Builds the single Makeium mod jar for NeoForge and Fabric.'
+    archiveFileName = "makeium-${mod_version}+mc${minecraft_version}.jar"
+    modJarContents(it)
+}
+
+// `gradlew build` produces the mod jar and runs the unit tests.
+tasks.register('build') {
+    group = 'build'
+    dependsOn 'universalJar', ':common:test'
+}

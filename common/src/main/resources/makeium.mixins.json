@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.hyproj.makeium.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": ["ServerPlayerGameModeMixin"],
+  "client": [
+    "client.FontAccessor",
+    "client.FontManagerAccessor",
+    "client.MinecraftAccessor",
+    "client.MinecraftInputMixin",
+    "client.GuiSetScreenMixin",
+    "client.CommandBlockEditScreenAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${mod_version}",
+	"name": "${mod_name}",
+	"description": "${mod_description}",
+	"authors": ["${mod_author}"],
+	"contact": {
+		"homepage": "https://hyproj.com"
+	},
+	"license": "${mod_license}",
+	"icon": "assets/makeium/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["com.hyproj.makeium.fabric.MakeiumFabric"],
+		"client": ["com.hyproj.makeium.fabric.MakeiumFabricClient"]
+	},
+	"mixins": ["${mod_id}.mixins.json"],
+	"depends": {
+		"fabricloader": ">=${fabric_loader_version}",
+		"minecraft": "~26.3",
+		"java": ">=${java_version}",
+		"fabric-api": "*"
+	}
+}

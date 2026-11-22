@@ -1,0 +1,88 @@
+plugins {
+    id 'makeium-loader'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = neo_version
+    def at = rootProject.file('common/src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+
+    runs {
+        configureEach {
+            logLevel = org.slf4j.event.Level.DEBUG
+            systemProperty 'makeium.dev', 'true'
+            // gradlew :neoforge:runClient -Pmakeium.devScreen=hub|display|resourcepack|datapack
+            if (project.hasProperty('makeium.devScreen')) {
+                systemProperty 'makeium.devScreen', project.property('makeium.devScreen')
+            }
+            // Automated in-game checks: gradlew :neoforge:runClient -Pmakeium.devScript=<file> (see DevAutomation)
+            if (project.hasProperty('makeium.devScript')) {
+                systemProperty 'makeium.devScript', project.property('makeium.devScript')
+            }
+        }
+        client {
+            client()
+            gameDirectory = file('runs/client')
+        }
+        // The universal jar exactly as players get it (runs/clientjar/mods): gradlew :neoforge:runClientJar
+        clientJar {
+            client()
+            gameDirectory = file('runs/clientjar')
+            loadedMods = []
+        }
+        server {
+            server()
+            gameDirectory = file('runs/server')
+            programArgument '--nogui'
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = file('runs/gametest')
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '**/.cache'
+}
+
+// neoforge.mods.toml is a template (expanded with gradle.properties values).
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version_range      : minecraft_version_range,
+            neo_version                  : neo_version,
+            neoforge_loader_version_range: neoforge_loader_version_range,
+            mod_id                       : mod_id,
+            mod_name                     : mod_name,
+            mod_license                  : mod_license,
+            mod_version                  : mod_version,
+            mod_author                   : mod_author,
+            mod_description              : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.matching { it.name == 'runClientJar' }.configureEach {
+    dependsOn rootProject.tasks.named('universalJar')
+    doFirst {
+        def mods = file('runs/clientjar/mods')
+        mods.mkdirs()
+        project.delete(fileTree(mods) { include 'makeium-*.jar' })
+        project.copy { from rootProject.tasks.named('universalJar'); into mods }
+    }
+}

@@ -1,0 +1,43 @@
+plugins {
+    id 'makeium-loader'
+    id 'net.fabricmc.fabric-loom'
+}
+
+loom {
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+    runs {
+        configureEach {
+            vmArg '-Dmakeium.dev=true'
+            if (project.hasProperty('makeium.devScreen')) {
+                vmArg "-Dmakeium.devScreen=${project.property('makeium.devScreen')}"
+            }
+            if (project.hasProperty('makeium.devScript')) {
+                vmArg "-Dmakeium.devScript=${project.property('makeium.devScript')}"
+            }
+        }
+        client {
+            runDir 'runs/client'
+        }
+        server {
+            runDir 'runs/server'
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+}
+
+// The universal jar exactly as players get it, in a real Fabric production launch (plus Fabric API):
+// gradlew :fabric:runClientJar
+tasks.register('runClientJar', net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+    def api = configurations.detachedConfiguration(dependencies.create("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")).setTransitive(false)
+    mods.setFrom(rootProject.tasks.named('universalJar'), api)
+    runDir = file('runs/clientjar')
+}
